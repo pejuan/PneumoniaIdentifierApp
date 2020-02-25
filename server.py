@@ -5,7 +5,6 @@ import io
 from PIL import Image
 from base64 import b64encode
 from tornado.options import define, options
-#from io import StringIO
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 from keras.applications.resnet50 import preprocess_input
@@ -25,15 +24,11 @@ class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("upload.html")
 
-class ImageHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("upload.html")
-
 class UploadHandler(tornado.web.RequestHandler):
     def post(self):
         
         model = load_model('models/ds-32-20-100sz.h5',compile=False)
-        file1 = self.request.files['file1'][0]
+        file1 = self.request.files['xray'][0]
         original_fname = file1['filename']
         extension = os.path.splitext(original_fname)[1]
         fname = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(12))
@@ -41,9 +36,6 @@ class UploadHandler(tornado.web.RequestHandler):
         output_file = open("images/" + final_filename, 'wb')
         output_file.write(file1['body'])
 
-        #file_body = self.request.files['file1'][0]['body']
-        #img = Image.open(io.BytesIO(file_body))
-        #Need to resize and grayscale
         path = 'images/'+final_filename
         img = load_img(path,target_size=(100,100))
         im = img_to_array(img)
@@ -61,23 +53,7 @@ class UploadHandler(tornado.web.RequestHandler):
             likelihood = pred[0][1].round(4)
         print("Result: ", result)
         print("Likelihood: ", likelihood)
-        #file_body = self.request.files['file1'][0]['body']
-        #file1 = self.request.files['file1'][0]
-        #original_fname = file1['filename']
-        #extension = os.path.splitext(original_fname)[1]
-        #extension = extension[1:]
-        #img = file_body
-        #encodedImg = b64encode(img)
-        #mime = "image/jpeg"
-        #uri = "data:%s;base64,%s" % (mime,encodedImg)
-        #file1 = self.request.files['file1'][0]
-        #original_fname = file1['filename']
-        #extension = os.path.splitext(original_fname)[1]
-        #fname = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(6))
-        #final_filename= fname+extension
-        #output_file = open("uploads/" + final_filename, 'wb')
-        #output_file.write(file1['body'])
-        #self.finish("file" + final_filename + " is uploaded")
+
         self.render('result.html',imurl=path, pred = result, score = likelihood)
         
 def main():
