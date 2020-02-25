@@ -47,10 +47,10 @@ class UploadHandler(tornado.web.RequestHandler):
         likelihood = 0
         if pred_class[0] == 0:
             result = "Normal"
-            likelihood = pred[0][0].round(4)
+            likelihood = pred[0][0].round(4)*100
         else:
             result = "Pneumonia"
-            likelihood = pred[0][1].round(4)
+            likelihood = pred[0][1].round(4)*100
         print("Result: ", result)
         print("Likelihood: ", likelihood)
 
