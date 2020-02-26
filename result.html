@@ -18,7 +18,9 @@
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
                 <img src="{{pic}}" class="img-fluid" alt="Responsive image" width="100%">
-                {{pred}} with a {{score}}% confidence
+                <div class="alert {{alert}} text-center" role="alert">
+                    {{msg}}
+                </div>                
             </div>
             <div class="col-sm-4"></div>
         </div>

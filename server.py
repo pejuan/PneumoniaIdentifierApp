@@ -48,26 +48,31 @@ class UploadHandler(tornado.web.RequestHandler):
 
         result = ""
         likelihood = 0
+        alert = ""
         if pred_class[0] == 0:
-            result = "Normal"
+            result = "No Pneumonia"
             likelihood = round(pred[0][0]*100,2)
+            alert = "alert-success"
         else:
             result = "Pneumonia"
             likelihood = round(pred[0][1]*100,2)
+            alert = "alert-danger"
         print("Result: ", result)
         print("Likelihood: ", likelihood)
         
+        message = result+" was found with a "+str(likelihood)+"% "+" confidence."
 
         img_file = open(path, "rb")
         strForEncode = b64encode(img_file.read())
         img_file.close()
+        
         encodedIm = strForEncode.decode('utf-8')
         mime = "image/"+extension[1:]+";"
         displayIm = "data:%sbase64,%s" % (mime,encodedIm)
         
         os.remove(path)
 
-        self.render('result.html', pred = result, score = likelihood, pic=displayIm)
+        self.render('result.html', msg=message, alert=alert, pic=displayIm)
         
 def main():
     http_server = tornado.httpserver.HTTPServer(Application())
