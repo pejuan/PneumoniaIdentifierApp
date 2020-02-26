@@ -1,6 +1,7 @@
-import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web, os.path, random, string
+import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web, random, string
 import numpy as np
 import io
+import os
 
 from PIL import Image
 from base64 import b64encode
@@ -16,6 +17,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", IndexHandler),
             (r"/images/(.*)",tornado.web.StaticFileHandler,{'path':'./images'}),
+            (r'/(favicon.ico)', tornado.web.StaticFileHandler, {"path": ""}),
             (r"/upload", UploadHandler)
         ]
         tornado.web.Application.__init__(self, handlers)
@@ -35,6 +37,7 @@ class UploadHandler(tornado.web.RequestHandler):
         final_filename= fname+extension
         output_file = open("images/" + final_filename, 'wb')
         output_file.write(file1['body'])
+        output_file.close()
 
         path = 'images/'+final_filename
         img = load_img(path,target_size=(100,100))
@@ -47,14 +50,24 @@ class UploadHandler(tornado.web.RequestHandler):
         likelihood = 0
         if pred_class[0] == 0:
             result = "Normal"
-            likelihood = pred[0][0].round(4)*100
+            likelihood = round(pred[0][0]*100,2)
         else:
             result = "Pneumonia"
-            likelihood = pred[0][1].round(4)*100
+            likelihood = round(pred[0][1]*100,2)
         print("Result: ", result)
         print("Likelihood: ", likelihood)
+        
 
-        self.render('result.html',imurl=path, pred = result, score = likelihood)
+        img_file = open(path, "rb")
+        strForEncode = b64encode(img_file.read())
+        img_file.close()
+        encodedIm = strForEncode.decode('utf-8')
+        mime = "image/"+extension[1:]+";"
+        displayIm = "data:%sbase64,%s" % (mime,encodedIm)
+        
+        os.remove(path)
+
+        self.render('result.html', pred = result, score = likelihood, pic=displayIm)
         
 def main():
     http_server = tornado.httpserver.HTTPServer(Application())
