@@ -1,7 +1,6 @@
-import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web, random, string
+import tornado.httpserver, tornado.ioloop, tornado.options, tornado.web
 import numpy as np
-import io
-import os
+import io, random, string, os
 
 from PIL import Image
 from base64 import b64encode
@@ -9,8 +8,9 @@ from tornado.options import define, options
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 from keras.applications.resnet50 import preprocess_input
+from keras import backend as K
 
-define("port", default=8888, help="run on the given port", type=int)
+define("port", default=80, help="run on the given port", type=int)
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -28,7 +28,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class UploadHandler(tornado.web.RequestHandler):
     def post(self):
-        
+        K.clear_session()
         model = load_model('models/ds-32-20-100sz.h5',compile=False)
         file1 = self.request.files['xray'][0]
         original_fname = file1['filename']
@@ -45,7 +45,7 @@ class UploadHandler(tornado.web.RequestHandler):
         x = preprocess_input(np.expand_dims(im.copy(), axis=0))
         pred_class = model.predict_classes(x)
         pred = model.predict(x)
-
+        K.clear_session()
         result = ""
         likelihood = 0
         alert = ""
