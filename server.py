@@ -18,15 +18,15 @@ class Application(tornado.web.Application):
             (r"/", IndexHandler),
             (r"/images/(.*)",tornado.web.StaticFileHandler,{'path':'./images'}),
             (r'/(favicon.ico)', tornado.web.StaticFileHandler, {"path": ""}),
-            (r"/upload", UploadHandler)
+            (r"/identify", IdentifyHandler)
         ]
         tornado.web.Application.__init__(self, handlers)
         
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("upload.html")
+        self.render("index.html")
 
-class UploadHandler(tornado.web.RequestHandler):
+class IdentifyHandler(tornado.web.RequestHandler):
     def post(self):
         K.clear_session()
         model = load_model('models/ds-32-20-100sz.h5',compile=False)
