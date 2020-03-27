@@ -13,18 +13,18 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
             <li class="nav-item">
-                <a class="nav-link" href="/about">About</a>
+                <a class="nav-link" href="/">Home </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/about">About<span class="sr-only">(current)</span></a>
             </li>
             
             </ul>
         </div>
     </nav>
     <div class="jumbotron text-center">    
-        <h1 class="cover-heading">Pneumonia identifier</h1>
+        <h1 class="cover-heading">About Pneumonia identifier</h1>
         
     </div>
     <div class="container">
@@ -32,29 +32,14 @@
             <div class="col-sm-3"></div>
             
             <div class="col-sm-6">
+                <blockquote class="blockquote">
+                    <p class="mb-0">I hope this tool can help at least one family by providing the capacity of detecting Pneumonia in people, especially children younger than five.</p>
+                    <footer class="blockquote-footer">José Pejuán</footer>
+                </blockquote>
                 
-                <form enctype="multipart/form-data" action="/identify" method="post">
-                    <div class="input-group mb-3">  
-                        <div class="custom-file">
-                            <input type="file" name="xray" class="custom-file-input" id="inputGroupFile02" aria-describedby="inputGroupFileAddon02"/>
-                            <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Image</label>
-                        </div>
-                        <div class="input-group-append">
-                            <input class="input-group-text" id="inputGroupFileAddon02" type="submit" value="Identify" />
-                        </div>
-                    </div>
-                </form>
             </div>
             <div class="col-sm-3"></div>
         </div>
     </div>
-    <script>
-        $('#inputGroupFile02').on('change',function(){
-            //get the file name
-            var fileName = $(this).val();
-            var cleanFileName = fileName.replace('C:\\fakepath\\', " ");
-            //replace the "Choose a file" label
-            $(this).next('.custom-file-label').html(cleanFileName);
-        })
-    </script>
+
 </body>
